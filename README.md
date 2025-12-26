@@ -5,9 +5,7 @@ Mencakup **Aplikasi Mobile (Flutter)** untuk pengguna dan **Web Dashboard** sert
 
 ## Demo Aplikasi
 
-<video src="docs/pushtaka-demo.mp4" controls="controls" style="max-width: 100%;">
-  <a href="docs/pushtaka-demo.mp4">Tonton Video Demo</a>
-</video>
+[![Demo Aplikasi Pushtaka](https://img.youtube.com/vi/HWhoEuCcPSE/0.jpg)](https://www.youtube.com/watch?v=HWhoEuCcPSE)
 
 ## Unduh Aplikasi
 
