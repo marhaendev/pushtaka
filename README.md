@@ -41,4 +41,5 @@ Project ini dikembangkan oleh **Hasan Askari** (aka **Marhaendev**).
 
 ## License
 
-Project ini dilisensikan di bawah [MIT License](./LICENSE).
+Project ini dilisensikan di bawah [PolyForm Noncommercial License 1.0.0](./LICENSE).
+**Hanya untuk penggunaan non-komersial.**
