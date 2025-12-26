@@ -3,6 +3,8 @@
 Sistem Informasi Perpustakaan Lengkap (Full Stack) berbasis Microservices.
 Mencakup **Aplikasi Mobile (Flutter)** untuk pengguna dan **Web Dashboard** serta **Backend API** untuk manajemen.
 
+## Unduh Aplikasi
+
 [![Download APK](https://img.shields.io/badge/Download-APK-green?style=for-the-badge&logo=android)](https://github.com/marhaendev/pushtaka/raw/main/apk/pushtaka-v1.0.0.apk)
 
 ## Arsitektur
