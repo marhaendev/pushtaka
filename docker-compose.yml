@@ -1,0 +1,154 @@
+services:
+
+  # Gateway
+  traefik:
+    image: traefik:latest
+    command:
+      - "--providers.docker=true"
+      - "--providers.docker.exposedbydefault=false"
+      - "--entrypoints.web.address=:80"
+    environment:
+      - DOCKER_API_VERSION=1.44
+      - TZ=Asia/Jakarta
+    ports:
+      - "${TRAEFIK_PORT}:80"
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+    networks:
+      - pushtaka-net
+
+  # Database
+  postgres:
+    image: postgres:15-alpine
+    environment:
+      POSTGRES_USER: ${DB_USER}
+      POSTGRES_PASSWORD: ${DB_PASSWORD}
+      POSTGRES_DB: ${DB_NAME}
+      TZ: Asia/Jakarta
+    ports:
+      - "${DB_PORT_EXTERNAL}:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    networks:
+      - pushtaka-net
+
+
+
+  # Message Broker
+  rabbitmq:
+    image: rabbitmq:3-management-alpine
+    ports:
+      - "${RABBITMQ_AMQP_PORT}:5672"
+      - "${RABBITMQ_MGMT_PORT}:15672"
+    environment:
+      RABBITMQ_DEFAULT_USER: ${RABBITMQ_USER}
+      RABBITMQ_DEFAULT_PASS: ${RABBITMQ_PASS}
+      TZ: Asia/Jakarta
+    networks:
+      - pushtaka-net
+
+  # Web/Landing Page
+  web:
+    build:
+      context: ./web
+      dockerfile: Dockerfile
+    restart: always
+    environment:
+      - TZ=Asia/Jakarta
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.web.rule=Host(`${DOMAIN_NAME}`) && PathPrefix(`/`)"
+      - "traefik.http.services.web.loadbalancer.server.port=80"
+    volumes:
+      - ./web:/usr/share/nginx/html
+    networks:
+      - pushtaka-net
+
+
+
+  # Microservices
+  identity:
+    build:
+      context: .
+      dockerfile: ./api/services/identity/Dockerfile
+    restart: always
+    environment:
+      - DB_Host=postgres
+      - DB_Host=postgres
+      - DB_User=${DB_USER}
+      - DB_Password=${DB_PASSWORD}
+      - DB_Name=${DB_NAME}
+      - DB_Port=5432
+      - JWT_SECRET=${JWT_SECRET}
+      - SMTP_HOST=${SMTP_HOST}
+      - SMTP_PORT=${SMTP_PORT}
+      - SMTP_USER=${SMTP_USER}
+      - SMTP_USER=${SMTP_USER}
+      - SMTP_PASS=${SMTP_PASS}
+      - TZ=Asia/Jakarta
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.identity.rule=Host(`${DOMAIN_NAME}`) && (PathPrefix(`/auth`) || PathPrefix(`/users`) || PathPrefix(`/settings`) || PathPrefix(`/profile`))"
+      - "traefik.http.services.identity.loadbalancer.server.port=3000"
+    depends_on:
+      - postgres
+    networks:
+      - pushtaka-net
+
+  book:
+    build:
+      context: .
+      dockerfile: ./api/services/book/Dockerfile
+    restart: always
+    environment:
+      - DB_Host=postgres
+      - DB_Host=postgres
+      - DB_User=${DB_USER}
+      - DB_Password=${DB_PASSWORD}
+      - DB_Name=${DB_NAME}
+      - DB_Port=5432
+      - JWT_SECRET=${JWT_SECRET}
+      - RABBITMQ_URL=amqp://${RABBITMQ_USER}:${RABBITMQ_PASS}@rabbitmq:5672/
+      - TZ=Asia/Jakarta
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.book.rule=Host(`${DOMAIN_NAME}`) && (PathPrefix(`/books`) || PathPrefix(`/favorites`))"
+      - "traefik.http.services.book.loadbalancer.server.port=3000"
+    depends_on:
+      - postgres
+      - rabbitmq
+    networks:
+      - pushtaka-net
+
+  transaction:
+    build:
+      context: .
+      dockerfile: ./api/services/transaction/Dockerfile
+    restart: always
+    environment:
+      - DB_Host=postgres
+      - DB_Host=postgres
+      - DB_User=${DB_USER}
+      - DB_Password=${DB_PASSWORD}
+      - DB_Name=${DB_NAME}
+      - DB_Port=5432
+      - JWT_SECRET=${JWT_SECRET}
+      - RABBITMQ_URL=amqp://${RABBITMQ_USER}:${RABBITMQ_PASS}@rabbitmq:5672/
+      - TZ=Asia/Jakarta
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.transaction.rule=Host(`${DOMAIN_NAME}`) && PathPrefix(`/transactions`)"
+      - "traefik.http.services.transaction.loadbalancer.server.port=3000"
+    depends_on:
+      - postgres
+      - rabbitmq
+    networks:
+      - pushtaka-net
+
+networks:
+  pushtaka-net:
+    driver: bridge
+
+volumes:
+  postgres_data:
+

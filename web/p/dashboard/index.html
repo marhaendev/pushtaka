@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="id">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard - Pushtaka</title>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            :root {
+                --primary: #059669;
+                --bg-body: #f8fafc;
+                --text-main: #0f172a;
+            }
+
+            body {
+                font-family: 'Outfit', sans-serif;
+                background-color: var(--bg-body);
+                color: var(--text-main);
+                display: none;
+                /* Hidden until auth check */
+                padding: 2rem;
+            }
+
+            .container {
+                max-width: 800px;
+                margin: 0 auto;
+            }
+
+            .h1 {
+                color: var(--primary);
+            }
+
+            .btn {
+                background-color: #ef4444;
+                color: white;
+                padding: 0.5rem 1rem;
+                border: none;
+                border-radius: 0.5rem;
+                cursor: pointer;
+                font-size: 0.9rem;
+            }
+    </style>
+</head>
+
+<body>
+    <div class="container">
+        <h1>Selamat Datang di Dashboard</h1>
+        <p>Anda berhasil login.</p>
+        <p>Token Anda tersimpan dengan aman.</p>
+        <br>
+        <button class="btn" onclick="logout()">Logout</button>
+    </div>
+
+    <script>
+        $(document).ready(function () {
+            const token = localStorage.getItem('token');
+            if (!token) {
+                window.location.href = '/p/login';
+            } else {
+                $('body').show();
+            }
+
+            window.logout = function () {
+                localStorage.removeItem('token');
+                window.location.href = '/p/login';
+            };
+        });
+    </script>
+</body>
+
+</html>

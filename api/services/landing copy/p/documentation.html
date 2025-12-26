@@ -1,0 +1,407 @@
+<!DOCTYPE html>
+<html lang="id">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dokumentasi API - Pushtaka</title>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap"
+        rel="stylesheet">
+    <style>
+        :root {
+            --primary: #6366f1;
+            --primary-dark: #4f46e5;
+            --bg-dark: #0f172a;
+            --sidebar-bg: #1e293b;
+            --text-light: #f8fafc;
+            --text-dim: #94a3b8;
+            --border-color: #334155;
+            --code-bg: #1e293b;
+            --header-height: 60px;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Outfit', sans-serif;
+            background-color: var(--bg-dark);
+            color: var(--text-light);
+            line-height: 1.6;
+            display: flex;
+            height: 100vh;
+            overflow: hidden;
+        }
+
+        /* Sidebar */
+        .sidebar {
+            width: 280px;
+            background-color: var(--sidebar-bg);
+            border-right: 1px solid var(--border-color);
+            display: flex;
+            flex-direction: column;
+            flex-shrink: 0;
+        }
+
+        .sidebar-header {
+            height: var(--header-height);
+            display: flex;
+            align-items: center;
+            padding: 0 1.5rem;
+            border-bottom: 1px solid var(--border-color);
+            font-weight: 700;
+            font-size: 1.25rem;
+            color: var(--text-light);
+            text-decoration: none;
+        }
+
+        .sidebar-nav {
+            flex: 1;
+            overflow-y: auto;
+            padding: 1.5rem;
+        }
+
+        .sidebar-nav ul {
+            list-style: none;
+        }
+
+        .sidebar-nav li {
+            margin-bottom: 0.5rem;
+        }
+
+        .nav-section {
+            font-size: 0.75rem;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            color: var(--text-dim);
+            font-weight: 600;
+            margin: 1.5rem 0 0.5rem;
+        }
+
+        .nav-section:first-child {
+            margin-top: 0;
+        }
+
+        .sidebar-nav a {
+            display: block;
+            padding: 0.5rem 0.75rem;
+            color: var(--text-dim);
+            text-decoration: none;
+            border-radius: 0.375rem;
+            transition: all 0.2s;
+            font-size: 0.9rem;
+        }
+
+        .sidebar-nav a:hover,
+        .sidebar-nav a.active {
+            background-color: rgba(99, 102, 241, 0.1);
+            color: var(--primary);
+        }
+
+        /* Main Content */
+        .main-content {
+            flex: 1;
+            overflow-y: auto;
+            scroll-behavior: smooth;
+            padding: 2rem 4rem;
+        }
+
+        .content-wrapper {
+            max-width: 900px;
+            margin: 0 auto;
+            padding-bottom: 4rem;
+        }
+
+        /* Typography */
+        h1,
+        h2,
+        h3,
+        h4 {
+            color: var(--text-light);
+            margin-bottom: 1rem;
+        }
+
+        h1 {
+            font-size: 2.5rem;
+            border-bottom: 1px solid var(--border-color);
+            padding-bottom: 1rem;
+            margin-bottom: 2rem;
+        }
+
+        h2 {
+            font-size: 1.75rem;
+            margin-top: 3rem;
+            border-bottom: 1px solid var(--border-color);
+            padding-bottom: 0.5rem;
+        }
+
+        h3 {
+            font-size: 1.25rem;
+            margin-top: 2rem;
+            color: var(--primary);
+        }
+
+        p {
+            margin-bottom: 1rem;
+            color: var(--text-dim);
+        }
+
+        ul {
+            margin-bottom: 1rem;
+            padding-left: 1.5rem;
+            color: var(--text-dim);
+        }
+
+        li {
+            margin-bottom: 0.25rem;
+        }
+
+        /* Code Blocks */
+        pre {
+            background-color: #0b1120;
+            padding: 1rem;
+            border-radius: 0.5rem;
+            border: 1px solid var(--border-color);
+            overflow-x: auto;
+            margin-bottom: 1.5rem;
+        }
+
+        code {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.85rem;
+            color: #e2e8f0;
+        }
+
+        p code {
+            background-color: rgba(99, 102, 241, 0.1);
+            color: var(--primary);
+            padding: 0.2rem 0.4rem;
+            border-radius: 0.25rem;
+        }
+
+        .badge {
+            display: inline-block;
+            padding: 0.25rem 0.5rem;
+            border-radius: 0.25rem;
+            font-size: 0.75rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            margin-right: 0.5rem;
+        }
+
+        .get {
+            background-color: rgba(34, 197, 94, 0.15);
+            color: #4ade80;
+        }
+
+        .post {
+            background-color: rgba(59, 130, 246, 0.15);
+            color: #60a5fa;
+        }
+
+        .put {
+            background-color: rgba(245, 158, 11, 0.15);
+            color: #fbbf24;
+        }
+
+        .delete {
+            background-color: rgba(239, 68, 68, 0.15);
+            color: #f87171;
+        }
+
+        .endpoint {
+            background-color: var(--sidebar-bg);
+            border: 1px solid var(--border-color);
+            border-radius: 0.5rem;
+            padding: 1.5rem;
+            margin-bottom: 2rem;
+        }
+
+        .endpoint-header {
+            display: flex;
+            align-items: center;
+            margin-bottom: 1rem;
+            font-family: 'JetBrains Mono', monospace;
+        }
+
+        .back-link {
+            position: fixed;
+            top: 1rem;
+            right: 2rem;
+            color: var(--text-dim);
+            text-decoration: none;
+            font-size: 0.9rem;
+            background: var(--sidebar-bg);
+            padding: 0.5rem 1rem;
+            border-radius: 20px;
+            border: 1px solid var(--border-color);
+        }
+
+        @media (max-width: 768px) {
+            body {
+                flex-direction: column;
+                overflow: auto;
+            }
+
+            .sidebar {
+                width: 100%;
+                height: auto;
+                border-right: none;
+                border-bottom: 1px solid var(--border-color);
+            }
+
+            .main-content {
+                padding: 2rem;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <aside class="sidebar">
+        <a href="/" class="sidebar-header">Pushtaka API</a>
+        <nav class="sidebar-nav">
+            <ul>
+                <li><a href="#introduction">Pengantar</a></li>
+                <li><a href="#base-url">Base URL</a></li>
+            </ul>
+
+            <div class="nav-section">Autentikasi</div>
+            <ul>
+                <li><a href="#auth-register">Register</a></li>
+                <li><a href="#auth-login">Login</a></li>
+                <li><a href="#auth-profile">Profile</a></li>
+            </ul>
+
+            <div class="nav-section">Buku</div>
+            <ul>
+                <li><a href="#book-list">Lihat Daftar</a></li>
+                <li><a href="#book-detail">Detail Buku</a></li>
+                <li><a href="#favorites">Favorit</a></li>
+            </ul>
+
+            <div class="nav-section">Transaksi</div>
+            <ul>
+                <li><a href="#borrow">Pinjam Buku</a></li>
+                <li><a href="#return">Kembalikan Buku</a></li>
+                <li><a href="#history">Riwayat</a></li>
+            </ul>
+        </nav>
+    </aside>
+
+    <main class="main-content">
+        <a href="/" class="back-link">&larr; Kembali ke Home</a>
+
+        <div class="content-wrapper">
+            <section id="introduction">
+                <h1>Dokumentasi API</h1>
+                <p>Selamat datang di dokumentasi API Pushtaka. pppaa</p>
+            </section>
+
+            <section id="base-url">
+                <h2>Base URL</h2>
+                <p>Semua request API harus diarahkan ke URL berikut:</p>
+                <div class="endpoint">
+                    <code>https://pushtaka.xapi.my.id</code>
+                </div>
+                <p>Format Response Standar:</p>
+                <pre><code>{
+  "status": "success",
+  "message": "optional message",
+  "data": { ... }
+}</code></pre>
+            </section>
+
+            <section id="auth">
+                <h2>Autentikasi</h2>
+
+                <div class="endpoint" id="auth-register">
+                    <div class="endpoint-header">
+                        <span class="badge post">POST</span>
+                        <span>/auth/register</span>
+                    </div>
+                    <p>Mendaftar pengguna baru.</p>
+                    <pre><code>{
+  "email": "user@contoh.com",
+  "password": "password123",
+  "name": "Nama User"
+}</code></pre>
+                </div>
+
+                <div class="endpoint" id="auth-login">
+                    <div class="endpoint-header">
+                        <span class="badge post">POST</span>
+                        <span>/auth/login</span>
+                    </div>
+                    <p>Masuk untuk mendapatkan token JWT.</p>
+                    <pre><code>{
+  "email": "user@contoh.com",
+  "password": "password123"
+}</code></pre>
+                </div>
+            </section>
+
+            <section id="favorites">
+                <h2>Favorit</h2>
+                <p>Kelola daftar buku favorit Anda. (Wajib Header Authorization)</p>
+
+                <div class="endpoint">
+                    <div class="endpoint-header">
+                        <span class="badge get">GET</span>
+                        <span>/favorites</span>
+                    </div>
+                    <p>Mendapatkan daftar buku favorit.</p>
+                </div>
+
+                <div class="endpoint">
+                    <div class="endpoint-header">
+                        <span class="badge post">POST</span>
+                        <span>/favorites/:book_id</span>
+                    </div>
+                    <p>Menambahkan buku ke favorit.</p>
+                </div>
+
+                <div class="endpoint">
+                    <div class="endpoint-header">
+                        <span class="badge delete">DELETE</span>
+                        <span>/favorites/:book_id</span>
+                    </div>
+                    <p>Menghapus buku dari favorit.</p>
+                </div>
+            </section>
+
+            <section id="transaksi">
+                <h2>Transaksi</h2>
+                <p>Manajemen peminjaman dan pengembalian buku.</p>
+
+                <div class="endpoint" id="borrow">
+                    <div class="endpoint-header">
+                        <span class="badge post">POST</span>
+                        <span>/transactions/borrow/:book_id</span>
+                    </div>
+                    <p>Meminjam buku. Stok akan berkurang otomatis.</p>
+                </div>
+
+                <div class="endpoint" id="return">
+                    <div class="endpoint-header">
+                        <span class="badge post">POST</span>
+                        <span>/transactions/return/:book_id</span>
+                    </div>
+                    <p>Mengembalikan buku. Denda akan dihitung jika terlambat.</p>
+                </div>
+            </section>
+
+            <footer>
+                <p style="margin-top: 4rem; border-top: 1px solid var(--border-color); padding-top: 2rem;">
+                    &copy; 2025 Pushtaka API Documentation.
+                </p>
+            </footer>
+        </div>
+    </main>
+</body>
+
+</html>

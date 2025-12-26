@@ -1,0 +1,8 @@
+go 1.25.3
+
+use (
+	./api/pkg
+	./api/services/book
+	./api/services/identity
+	./api/services/transaction
+)

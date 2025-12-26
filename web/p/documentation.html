@@ -1,0 +1,1154 @@
+<!DOCTYPE html>
+<html lang="id">
+
+<head>
+    <title>Dokumentasi API - Pushtaka</title>
+    <!--# include virtual="/partials/head_meta.html" -->
+    <style>
+        .badge.put {
+            background-color: #f59e0b;
+            color: white;
+        }
+
+        .badge.delete {
+            background-color: #ef4444;
+            color: white;
+        }
+    </style>
+</head>
+
+<body class="docs-body">
+    <!--# include virtual="/partials/doc_sidebar.html" -->
+
+    <main class="main-content">
+        <a href="/" class="back-link">&larr; Kembali ke Home</a>
+
+        <div class="content-wrapper">
+            <section id="introduction">
+                <h1>Dokumentasi API</h1>
+                <p>Selamat datang di dokumentasi API Pushtaka. Platform manajemen perpustakaan modern yang siap
+                    diintegrasikan.</p>
+                <p>Gunakan endpoint di bawah ini untuk mengelola user, buku, dan transaksi peminjaman.</p>
+            </section>
+
+            <section id="base-url">
+                <h2>Base URL</h2>
+                <p>Semua request API harus diarahkan ke URL berikut:</p>
+                <div class="base-url-box">
+                    <code>https://pushtaka.xapi.my.id</code>
+                </div>
+                <div class="tester-cta"
+                    style="background: var(--primary-soft); padding: 1.5rem; border-radius: 0.75rem; border: 1px dashed var(--primary); margin-top: 1.5rem; display: flex; align-items: center; justify-content: space-between;">
+                    <div>
+                        <h4 style="color: var(--primary-dark); margin: 0;">Coba Interactive API Tester</h4>
+                        <p style="margin: 0.25rem 0 0; font-size: 0.9rem;">Ikuti skenario pengujian 1 s/d 10 secara
+                            terurut dengan Stepper.</p>
+                    </div>
+                    <a href="/p/tester" class="cta-button" style="padding: 0.5rem 1rem; font-size: 0.85rem;">Buka
+                        Tester</a>
+                </div>
+                <p style="margin-top: 1.5rem;">Format Response Standar:</p>
+                <pre><code>{
+  "status": "success",
+  "message": "optional message",
+  "data": { ... }
+}</code></pre>
+            </section>
+
+            <section id="auth">
+                <h2>Autentikasi</h2>
+
+                <div class="endpoint" id="auth-register">
+                    <div class="endpoint-header">
+                        <span class="badge post">POST</span>
+                        <span>/auth/register</span>
+                    </div>
+                    <p>Mendaftar pengguna baru.</p>
+                    <div class="docs-tabs">
+                        <div class="tab-header">
+                            <button class="tab-btn active" data-tab="request">Request</button>
+                            <button class="tab-btn" data-tab="response">Response</button>
+                        </div>
+                        <div class="tab-body">
+                            <div class="tab-content active" data-content="request">
+                                <pre><code>{
+  "email": "user@contoh.com",
+  "password": "password123",
+  "name": "Nama User"
+}</code></pre>
+                            </div>
+                            <div class="tab-content" data-content="response">
+                                <div class="status-tabs">
+                                    <div class="status-tab-header">
+                                        <button class="status-tab-btn active" data-status="200">200 OK</button>
+                                        <button class="status-tab-btn" data-status="400">400 Error</button>
+                                    </div>
+                                    <div class="status-tab-body">
+                                        <div class="status-tab-content active" data-status-content="200">
+                                            <pre><code>{
+  "status": "success",
+  "message": "otp sent to email",
+  "data": { "email": "user@contoh.com" }
+}</code></pre>
+                                        </div>
+                                        <div class="status-tab-content" data-status-content="400">
+                                            <pre><code>{
+  "status": "error",
+  "message": "email already exists",
+  "data": null
+}</code></pre>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="endpoint" id="auth-otp">
+                    <div class="endpoint-header">
+                        <span class="badge post">POST</span>
+                        <span>/auth/verify-otp</span>
+                    </div>
+                    <p>Verifikasi OTP untuk registrasi atau login.</p>
+                    <div class="docs-tabs">
+                        <div class="tab-header">
+                            <button class="tab-btn active" data-tab="request">Request</button>
+                            <button class="tab-btn" data-tab="response">Response</button>
+                        </div>
+                        <div class="tab-body">
+                            <div class="tab-content active" data-content="request">
+                                <pre><code>{
+  "email": "user@contoh.com",
+  "otp": "123456",
+  "purpose": "register"
+}</code></pre>
+                            </div>
+                            <div class="tab-content" data-content="response">
+                                <div class="status-tabs">
+                                    <div class="status-tab-header">
+                                        <button class="status-tab-btn active" data-status="200">200 OK</button>
+                                        <button class="status-tab-btn" data-status="401">401 Error</button>
+                                    </div>
+                                    <div class="status-tab-body">
+                                        <div class="status-tab-content active" data-status-content="200">
+                                            <pre><code>{
+  "status": "success",
+  "message": "account verified",
+  "data": { "token": "eyJhbGci..." }
+}</code></pre>
+                                        </div>
+                                        <div class="status-tab-content" data-status-content="401">
+                                            <pre><code>{
+  "status": "error",
+  "message": "invalid or expired otp",
+  "data": null
+}</code></pre>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="endpoint" id="auth-login">
+                    <div class="endpoint-header">
+                        <span class="badge post">POST</span>
+                        <span>/auth/login</span>
+                    </div>
+                    <p>Masuk untuk mendapatkan token JWT.</p>
+                    <div class="docs-tabs">
+                        <div class="tab-header">
+                            <button class="tab-btn active" data-tab="request">Request</button>
+                            <button class="tab-btn" data-tab="response">Response</button>
+                        </div>
+                        <div class="tab-body">
+                            <div class="tab-content active" data-content="request">
+                                <pre><code>{
+  "email": "user@contoh.com",
+  "password": "password123"
+}</code></pre>
+                            </div>
+                            <div class="tab-content" data-content="response">
+                                <div class="status-tabs">
+                                    <div class="status-tab-header">
+                                        <button class="status-tab-btn active" data-status="200">200 OK</button>
+                                        <button class="status-tab-btn" data-status="401">401 Error</button>
+                                    </div>
+                                    <div class="status-tab-body">
+                                        <div class="status-tab-content active" data-status-content="200">
+                                            <pre><code>{
+  "status": "success",
+  "message": "login successful",
+  "data": { "token": "eyJhbGci..." }
+}</code></pre>
+                                        </div>
+                                        <div class="status-tab-content" data-status-content="401">
+                                            <pre><code>{
+  "status": "error",
+  "message": "invalid email or password",
+  "data": null
+}</code></pre>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="endpoint">
+                    <div class="endpoint-header">
+                        <span class="badge post">POST</span>
+                        <span>/auth/forgot-password</span>
+                    </div>
+                    <p>Request OTP reset password.</p>
+                    <div class="docs-tabs">
+                        <div class="tab-header">
+                            <button class="tab-btn active" data-tab="request">Request</button>
+                            <button class="tab-btn" data-tab="response">Response</button>
+                        </div>
+                        <div class="tab-body">
+                            <div class="tab-content active" data-content="request">
+                                <pre><code>{ "email": "user@contoh.com" }</code></pre>
+                            </div>
+                            <div class="tab-content" data-content="response">
+                                <div class="status-tabs">
+                                    <div class="status-tab-header">
+                                        <button class="status-tab-btn active" data-status="200">200 OK</button>
+                                        <button class="status-tab-btn" data-status="404">404 Error</button>
+                                    </div>
+                                    <div class="status-tab-body">
+                                        <div class="status-tab-content active" data-status-content="200">
+                                            <pre><code>{
+  "status": "success",
+  "message": "otp sent to email",
+  "data": null
+}</code></pre>
+                                        </div>
+                                        <div class="status-tab-content" data-status-content="404">
+                                            <pre><code>{
+  "status": "error",
+  "message": "email not found",
+  "data": null
+}</code></pre>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="endpoint">
+                    <div class="endpoint-header">
+                        <span class="badge post">POST</span>
+                        <span>/auth/reset-password</span>
+                    </div>
+                    <p>Reset password dengan token.</p>
+                    <div class="docs-tabs">
+                        <div class="tab-header">
+                            <button class="tab-btn active" data-tab="request">Request</button>
+                            <button class="tab-btn" data-tab="response">Response</button>
+                        </div>
+                        <div class="tab-body">
+                            <div class="tab-content active" data-content="request">
+                                <pre><code>{
+  "token": "reset_token_here",
+  "new_password": "newpassword123"
+}</code></pre>
+                            </div>
+                            <div class="tab-content" data-content="response">
+                                <div class="status-tabs">
+                                    <div class="status-tab-header">
+                                        <button class="status-tab-btn active" data-status="200">200 OK</button>
+                                        <button class="status-tab-btn" data-status="400">400 Error</button>
+                                    </div>
+                                    <div class="status-tab-body">
+                                        <div class="status-tab-content active" data-status-content="200">
+                                            <pre><code>{
+  "status": "success",
+  "message": "password reset successfully",
+  "data": null
+}</code></pre>
+                                        </div>
+                                        <div class="status-tab-content" data-status-content="400">
+                                            <pre><code>{
+  "status": "error",
+  "message": "invalid or expired token",
+  "data": null
+}</code></pre>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="endpoint" id="auth-profile">
+                    <div class="endpoint-header">
+                        <span class="badge get">GET</span>
+                        <span>/auth/me</span>
+                    </div>
+                    <p>Mendapatkan profil user yang sedang login.</p>
+                    <div class="docs-tabs">
+                        <div class="tab-header">
+                            <button class="tab-btn active" data-tab="request">Request</button>
+                            <button class="tab-btn" data-tab="response">Response</button>
+                        </div>
+                        <div class="tab-body">
+                            <div class="tab-content active" data-content="request">
+                                <pre><code>Header Authorization: Bearer {token}</code></pre>
+                            </div>
+                            <div class="tab-content" data-content="response">
+                                <div class="status-tabs">
+                                    <div class="status-tab-header">
+                                        <button class="status-tab-btn active" data-status="200">200 OK</button>
+                                        <button class="status-tab-btn" data-status="401">401 Error</button>
+                                    </div>
+                                    <div class="status-tab-body">
+                                        <div class="status-tab-content active" data-status-content="200">
+                                            <pre><code>{
+  "status": "success",
+  "message": "profile retrieved",
+  "data": { "id": 1, "name": "User", "email": "user@example.com" }
+}</code></pre>
+                                        </div>
+                                        <div class="status-tab-content" data-status-content="401">
+                                            <pre><code>{
+  "status": "error",
+  "message": "unauthorized",
+  "data": null
+}</code></pre>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <section id="settings">
+                <h2>Pengaturan (Admin)</h2>
+                <div class="endpoint">
+                    <div class="endpoint-header">
+                        <span class="badge get">GET</span>
+                        <span>/settings</span>
+                    </div>
+                    <p>List semua konfigurasi aplikasi.</p>
+                    <div class="docs-tabs">
+                        <div class="tab-header">
+                            <button class="tab-btn active" data-tab="request">Request</button>
+                            <button class="tab-btn" data-tab="response">Response</button>
+                        </div>
+                        <div class="tab-body">
+                            <div class="tab-content active" data-content="request">
+                                <pre><code>Header Authorization: Bearer {admin_token}</code></pre>
+                            </div>
+                            <div class="tab-content" data-content="response">
+                                <div class="status-tabs">
+                                    <div class="status-tab-header">
+                                        <button class="status-tab-btn active" data-status="200">200 OK</button>
+                                        <button class="status-tab-btn" data-status="403">403 Forbidden</button>
+                                    </div>
+                                    <div class="status-tab-body">
+                                        <div class="status-tab-content active" data-status-content="200">
+                                            <pre><code>{
+  "status": "success",
+  "data": [
+    { "key": "app_name", "value": "Pushtaka", "type": "string" },
+    { "key": "max_borrow_days", "value": "7", "type": "int" }
+  ]
+}</code></pre>
+                                        </div>
+                                        <div class="status-tab-content" data-status-content="403">
+                                            <pre><code>{
+  "status": "error",
+  "message": "admin access required",
+  "data": null
+}</code></pre>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="endpoint">
+                    <div class="endpoint-header">
+                        <span class="badge put">PUT</span>
+                        <span>/settings/{key}</span>
+                    </div>
+                    <p>Update nilai konfigurasi.</p>
+                    <div class="docs-tabs">
+                        <div class="tab-header">
+                            <button class="tab-btn active" data-tab="request">Request</button>
+                            <button class="tab-btn" data-tab="response">Response</button>
+                        </div>
+                        <div class="tab-body">
+                            <div class="tab-content active" data-content="request">
+                                <pre><code>{ "value": "New Value" }</code></pre>
+                            </div>
+                            <div class="tab-content" data-content="response">
+                                <div class="status-tabs">
+                                    <div class="status-tab-header">
+                                        <button class="status-tab-btn active" data-status="200">200 OK</button>
+                                        <button class="status-tab-btn" data-status="400">400 Error</button>
+                                    </div>
+                                    <div class="status-tab-body">
+                                        <div class="status-tab-content active" data-status-content="200">
+                                            <pre><code>{
+  "status": "success",
+  "message": "setting updated",
+  "data": null
+}</code></pre>
+                                        </div>
+                                        <div class="status-tab-content" data-status-content="400">
+                                            <pre><code>{
+  "status": "error",
+  "message": "invalid value format",
+  "data": null
+}</code></pre>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <section id="users">
+                <h2>Manajemen User (Admin)</h2>
+                <div class="endpoint">
+                    <div class="endpoint-header">
+                        <span class="badge get">GET</span>
+                        <span>/users</span>
+                    </div>
+                    <p>Mendapatkan list semua user.</p>
+                    <div class="docs-tabs">
+                        <div class="tab-header">
+                            <button class="tab-btn active" data-tab="request">Request</button>
+                            <button class="tab-btn" data-tab="response">Response</button>
+                        </div>
+                        <div class="tab-body">
+                            <div class="tab-content active" data-content="request">
+                                <pre><code>Query: ?page=1&limit=10</code></pre>
+                            </div>
+                            <div class="tab-content" data-content="response">
+                                <div class="status-tabs">
+                                    <div class="status-tab-header">
+                                        <button class="status-tab-btn active" data-status="200">200 OK</button>
+                                        <button class="status-tab-btn" data-status="401">401 Error</button>
+                                    </div>
+                                    <div class="status-tab-body">
+                                        <div class="status-tab-content active" data-status-content="200">
+                                            <pre><code>{
+  "status": "success",
+  "data": [
+    { "id": 1, "name": "Admin", "email": "admin@mail.com", "role": "admin" },
+    { "id": 2, "name": "User", "email": "user@mail.com", "role": "user" }
+  ]
+}</code></pre>
+                                        </div>
+                                        <div class="status-tab-content" data-status-content="401">
+                                            <pre><code>{
+  "status": "error",
+  "message": "unauthorized",
+  "data": null
+}</code></pre>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="endpoint">
+                    <div class="endpoint-header">
+                        <span class="badge post">POST</span>
+                        <span>/users</span>
+                    </div>
+                    <p>Buat user baru manually.</p>
+                    <div class="docs-tabs">
+                        <div class="tab-header">
+                            <button class="tab-btn active" data-tab="request">Request</button>
+                            <button class="tab-btn" data-tab="response">Response</button>
+                        </div>
+                        <div class="tab-body">
+                            <div class="tab-content active" data-content="request">
+                                <pre><code>{
+  "email": "newadmin@example.com",
+  "password": "strongpassword",
+  "name": "New Admin"
+}</code></pre>
+                            </div>
+                            <div class="tab-content" data-content="response">
+                                <div class="status-tabs">
+                                    <div class="status-tab-header">
+                                        <button class="status-tab-btn active" data-status="201">201 Created</button>
+                                        <button class="status-tab-btn" data-status="400">400 Error</button>
+                                    </div>
+                                    <div class="status-tab-body">
+                                        <div class="status-tab-content active" data-status-content="201">
+                                            <pre><code>{
+  "status": "success",
+  "message": "user created",
+  "data": { "id": 5, "name": "New Admin" }
+}</code></pre>
+                                        </div>
+                                        <div class="status-tab-content" data-status-content="400">
+                                            <pre><code>{
+  "status": "error",
+  "message": "email already registered",
+  "data": null
+}</code></pre>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="endpoint">
+                    <div class="endpoint-header">
+                        <span class="badge delete">DELETE</span>
+                        <span>/users/{id}</span>
+                    </div>
+                    <p>Hapus user (Soft delete default).</p>
+                    <div class="docs-tabs">
+                        <div class="tab-header">
+                            <button class="tab-btn active" data-tab="request">Request</button>
+                            <button class="tab-btn" data-tab="response">Response</button>
+                        </div>
+                        <div class="tab-body">
+                            <div class="tab-content active" data-content="request">
+                                <pre><code>DELETE /users/5?permanent=true</code></pre>
+                            </div>
+                            <div class="tab-content" data-content="response">
+                                <div class="status-tabs">
+                                    <div class="status-tab-header">
+                                        <button class="status-tab-btn active" data-status="200">200 OK</button>
+                                        <button class="status-tab-btn" data-status="404">404 Error</button>
+                                    </div>
+                                    <div class="status-tab-body">
+                                        <div class="status-tab-content active" data-status-content="200">
+                                            <pre><code>{
+  "status": "success",
+  "message": "user deleted",
+  "data": null
+}</code></pre>
+                                        </div>
+                                        <div class="status-tab-content" data-status-content="404">
+                                            <pre><code>{
+  "status": "error",
+  "message": "user not found",
+  "data": null
+}</code></pre>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <section id="books">
+                <h2>Buku</h2>
+                <div class="endpoint" id="book-list">
+                    <div class="endpoint-header">
+                        <span class="badge get">GET</span>
+                        <span>/books</span>
+                    </div>
+                    <p>Mendapatkan daftar semua buku.</p>
+                    <div class="docs-tabs">
+                        <div class="tab-header">
+                            <button class="tab-btn active" data-tab="request">Request</button>
+                            <button class="tab-btn" data-tab="response">Response</button>
+                        </div>
+                        <div class="tab-body">
+                            <div class="tab-content active" data-content="request">
+                                <pre><code>Query: ?search= Clean Code&page=1&limit=10</code></pre>
+                            </div>
+                            <div class="tab-content" data-content="response">
+                                <div class="status-tabs">
+                                    <div class="status-tab-header">
+                                        <button class="status-tab-btn active" data-status="200">200 OK</button>
+                                    </div>
+                                    <div class="status-tab-body">
+                                        <div class="status-tab-content active" data-status-content="200">
+                                            <pre><code>{
+  "status": "success",
+  "data": [
+    { "id": 1, "title": "Clean Code", "author": "Robert C. Martin", "stock": 5 },
+    { "id": 2, "title": "The Pragmatic Programmer", "author": "Andy Hunt", "stock": 3 }
+  ]
+}</code></pre>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="endpoint" id="book-detail">
+                    <div class="endpoint-header">
+                        <span class="badge get">GET</span>
+                        <span>/books/:id</span>
+                    </div>
+                    <p>Mendapatkan detail satu buku.</p>
+                    <div class="docs-tabs">
+                        <div class="tab-header">
+                            <button class="tab-btn active" data-tab="request">Request</button>
+                            <button class="tab-btn" data-tab="response">Response</button>
+                        </div>
+                        <div class="tab-body">
+                            <div class="tab-content active" data-content="request">
+                                <pre><code>GET /books/1</code></pre>
+                            </div>
+                            <div class="tab-content" data-content="response">
+                                <div class="status-tabs">
+                                    <div class="status-tab-header">
+                                        <button class="status-tab-btn active" data-status="200">200 OK</button>
+                                        <button class="status-tab-btn" data-status="404">404 Not Found</button>
+                                    </div>
+                                    <div class="status-tab-body">
+                                        <div class="status-tab-content active" data-status-content="200">
+                                            <pre><code>{
+  "status": "success",
+  "data": { "id": 1, "title": "Clean Code", "author": "Uncle Bob", "stock": 5 }
+}</code></pre>
+                                        </div>
+                                        <div class="status-tab-content" data-status-content="404">
+                                            <pre><code>{
+  "status": "error",
+  "message": "book not found",
+  "data": null
+}</code></pre>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div id="book-admin" style="margin-top: 2rem;">
+                    <h3>Manajemen Buku (Admin)</h3>
+                    <div class="endpoint">
+                        <div class="endpoint-header">
+                            <span class="badge post">POST</span>
+                            <span>/books</span>
+                        </div>
+                        <p>Tambah buku baru ke sistem.</p>
+                        <div class="docs-tabs">
+                            <div class="tab-header">
+                                <button class="tab-btn active" data-tab="request">Request</button>
+                                <button class="tab-btn" data-tab="response">Response</button>
+                            </div>
+                            <div class="tab-body">
+                                <div class="tab-content active" data-content="request">
+                                    <pre><code>{
+  "title": "Clean Architecture",
+  "author": "Robert C. Martin",
+  "stock": 10
+}</code></pre>
+                                </div>
+                                <div class="tab-content" data-content="response">
+                                    <div class="status-tabs">
+                                        <div class="status-tab-header">
+                                            <button class="status-tab-btn active" data-status="201">201 Created</button>
+                                            <button class="status-tab-btn" data-status="400">400 Error</button>
+                                        </div>
+                                        <div class="status-tab-body">
+                                            <div class="status-tab-content active" data-status-content="201">
+                                                <pre><code>{
+  "status": "success",
+  "message": "book created",
+  "data": { "id": 101, "title": "Clean Architecture" }
+}</code></pre>
+                                            </div>
+                                            <div class="status-tab-content" data-status-content="400">
+                                                <pre><code>{
+  "status": "error",
+  "message": "missing required field: title",
+  "data": null
+}</code></pre>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="endpoint">
+                        <div class="endpoint-header">
+                            <span class="badge put">PUT</span>
+                            <span>/books/:id</span>
+                        </div>
+                        <p>Update informasi data buku.</p>
+                        <div class="docs-tabs">
+                            <div class="tab-header">
+                                <button class="tab-btn active" data-tab="request">Request</button>
+                                <button class="tab-btn" data-tab="response">Response</button>
+                            </div>
+                            <div class="tab-body">
+                                <div class="tab-content active" data-content="request">
+                                    <pre><code>{ "stock": 20 }</code></pre>
+                                </div>
+                                <div class="tab-content" data-content="response">
+                                    <div class="status-tabs">
+                                        <div class="status-tab-header">
+                                            <button class="status-tab-btn active" data-status="200">200 OK</button>
+                                            <button class="status-tab-btn" data-status="404">404 Not Found</button>
+                                        </div>
+                                        <div class="status-tab-body">
+                                            <div class="status-tab-content active" data-status-content="200">
+                                                <pre><code>{
+  "status": "success",
+  "message": "book updated",
+  "data": null
+}</code></pre>
+                                            </div>
+                                            <div class="status-tab-content" data-status-content="404">
+                                                <pre><code>{
+  "status": "error",
+  "message": "book not found",
+  "data": null
+}</code></pre>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="endpoint">
+                        <div class="endpoint-header">
+                            <span class="badge delete">DELETE</span>
+                            <span>/books/:id</span>
+                        </div>
+                        <p>Hapus satu buku dari sistem.</p>
+                        <div class="docs-tabs">
+                            <div class="tab-header">
+                                <button class="tab-btn active" data-tab="request">Request</button>
+                                <button class="tab-btn" data-tab="response">Response</button>
+                            </div>
+                            <div class="tab-body">
+                                <div class="tab-content active" data-content="request">
+                                    <pre><code>DELETE /books/1</code></pre>
+                                </div>
+                                <div class="tab-content" data-content="response">
+                                    <div class="status-tabs">
+                                        <div class="status-tab-header">
+                                            <button class="status-tab-btn active" data-status="200">200 OK</button>
+                                            <button class="status-tab-btn" data-status="404">404 Not Found</button>
+                                        </div>
+                                        <div class="status-tab-body">
+                                            <div class="status-tab-content active" data-status-content="200">
+                                                <pre><code>{
+  "status": "success",
+  "message": "book deleted",
+  "data": null
+}</code></pre>
+                                            </div>
+                                            <div class="status-tab-content" data-status-content="404">
+                                                <pre><code>{
+  "status": "error",
+  "message": "book not found",
+  "data": null
+}</code></pre>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="endpoint">
+                        <div class="endpoint-header">
+                            <span class="badge delete">DELETE</span>
+                            <span>/books</span>
+                        </div>
+                        <p>Hapus banyak buku (Batch).</p>
+                        <div class="docs-tabs">
+                            <div class="tab-header">
+                                <button class="tab-btn active" data-tab="request">Request</button>
+                                <button class="tab-btn" data-tab="response">Response</button>
+                            </div>
+                            <div class="tab-body">
+                                <div class="tab-content active" data-content="request">
+                                    <pre><code>{ "ids": [1, 2, 3] }</code></pre>
+                                </div>
+                                <div class="tab-content" data-content="response">
+                                    <div class="status-tabs">
+                                        <div class="status-tab-header">
+                                            <button class="status-tab-btn active" data-status="200">200 OK</button>
+                                        </div>
+                                        <div class="status-tab-body">
+                                            <div class="status-tab-content active" data-status-content="200">
+                                                <pre><code>{
+  "status": "success",
+  "message": "books deleted",
+  "data": null
+}</code></pre>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <section id="favorites">
+                <h2>Favorit</h2>
+                <p>Kelola daftar buku favorit Anda. (Wajib Header Authorization)</p>
+
+                <div class="endpoint">
+                    <div class="endpoint-header">
+                        <span class="badge get">GET</span>
+                        <span>/favorites</span>
+                    </div>
+                    <p>Mendapatkan daftar buku favorit.</p>
+                    <div class="docs-tabs">
+                        <div class="tab-header">
+                            <button class="tab-btn active" data-tab="request">Request</button>
+                            <button class="tab-btn" data-tab="response">Response</button>
+                        </div>
+                        <div class="tab-body">
+                            <div class="tab-content active" data-content="request">
+                                <pre><code>Header Authorization: Bearer {token}</code></pre>
+                            </div>
+                            <div class="tab-content" data-content="response">
+                                <div class="status-tabs">
+                                    <div class="status-tab-header">
+                                        <button class="status-tab-btn active" data-status="200">200 OK</button>
+                                        <button class="status-tab-btn" data-status="401">401 Error</button>
+                                    </div>
+                                    <div class="status-tab-body">
+                                        <div class="status-tab-content active" data-status-content="200">
+                                            <pre><code>{
+  "status": "success",
+  "data": [
+    { "id": 1, "title": "Clean Code", "author": "Uncle Bob" }
+  ]
+}</code></pre>
+                                        </div>
+                                        <div class="status-tab-content" data-status-content="401">
+                                            <pre><code>{
+  "status": "error",
+  "message": "unauthorized",
+  "data": null
+}</code></pre>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="endpoint">
+                    <div class="endpoint-header">
+                        <span class="badge post">POST</span>
+                        <span>/favorites/{book_id}</span>
+                    </div>
+                    <p>Menambahkan buku ke favorit.</p>
+                    <div class="docs-tabs">
+                        <div class="tab-header">
+                            <button class="tab-btn active" data-tab="request">Request</button>
+                            <button class="tab-btn" data-tab="response">Response</button>
+                        </div>
+                        <div class="tab-body">
+                            <div class="tab-content active" data-content="request">
+                                <pre><code>POST /favorites/101</code></pre>
+                            </div>
+                            <div class="tab-content" data-content="response">
+                                <div class="status-tabs">
+                                    <div class="status-tab-header">
+                                        <button class="status-tab-btn active" data-status="200">200 OK</button>
+                                        <button class="status-tab-btn" data-status="404">404 Error</button>
+                                    </div>
+                                    <div class="status-tab-body">
+                                        <div class="status-tab-content active" data-status-content="200">
+                                            <pre><code>{
+  "status": "success",
+  "message": "book added to favorites",
+  "data": null
+}</code></pre>
+                                        </div>
+                                        <div class="status-tab-content" data-status-content="404">
+                                            <pre><code>{
+  "status": "error",
+  "message": "book not found",
+  "data": null
+}</code></pre>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="endpoint">
+                    <div class="endpoint-header">
+                        <span class="badge delete">DELETE</span>
+                        <span>/favorites/{book_id}</span>
+                    </div>
+                    <p>Menghapus buku dari favorit.</p>
+                    <div class="docs-tabs">
+                        <div class="tab-header">
+                            <button class="tab-btn active" data-tab="request">Request</button>
+                            <button class="tab-btn" data-tab="response">Response</button>
+                        </div>
+                        <div class="tab-body">
+                            <div class="tab-content active" data-content="request">
+                                <pre><code>DELETE /favorites/101</code></pre>
+                            </div>
+                            <div class="tab-content" data-content="response">
+                                <div class="status-tabs">
+                                    <div class="status-tab-header">
+                                        <button class="status-tab-btn active" data-status="200">200 OK</button>
+                                    </div>
+                                    <div class="status-tab-body">
+                                        <div class="status-tab-content active" data-status-content="200">
+                                            <pre><code>{
+  "status": "success",
+  "message": "book removed from favorites",
+  "data": null
+}</code></pre>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <section id="transaksi">
+                <h2>Transaksi</h2>
+                <p>Manajemen peminjaman dan pengembalian buku.</p>
+
+                <div class="endpoint" id="borrow">
+                    <div class="endpoint-header">
+                        <span class="badge post">POST</span>
+                        <span>/transactions/borrow/{book_id}</span>
+                    </div>
+                    <p>Meminjam buku. Stok akan berkurang otomatis.</p>
+                    <div class="docs-tabs">
+                        <div class="tab-header">
+                            <button class="tab-btn active" data-tab="request">Request</button>
+                            <button class="tab-btn" data-tab="response">Response</button>
+                        </div>
+                        <div class="tab-body">
+                            <div class="tab-content active" data-content="request">
+                                <pre><code>POST /transactions/borrow/101</code></pre>
+                            </div>
+                            <div class="tab-content" data-content="response">
+                                <div class="status-tabs">
+                                    <div class="status-tab-header">
+                                        <button class="status-tab-btn active" data-status="200">200 OK</button>
+                                        <button class="status-tab-btn" data-status="400">400 Error</button>
+                                    </div>
+                                    <div class="status-tab-body">
+                                        <div class="status-tab-content active" data-status-content="200">
+                                            <pre><code>{
+  "status": "success",
+  "message": "book borrowed successfully",
+  "data": { "borrowed_at": "2025-12-24T... ", "due_date": "2025-12-31T..." }
+}</code></pre>
+                                        </div>
+                                        <div class="status-tab-content" data-status-content="400">
+                                            <pre><code>{
+  "status": "error",
+  "message": "book is currently unavailable (out of stock)",
+  "data": null
+}</code></pre>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="endpoint" id="return">
+                    <div class="endpoint-header">
+                        <span class="badge post">POST</span>
+                        <span>/transactions/return/{book_id}</span>
+                    </div>
+                    <p>Mengembalikan buku. Denda akan dihitung otomatis jika terlambat.</p>
+                    <div class="docs-tabs">
+                        <div class="tab-header">
+                            <button class="tab-btn active" data-tab="request">Request</button>
+                            <button class="tab-btn" data-tab="response">Response</button>
+                        </div>
+                        <div class="tab-body">
+                            <div class="tab-content active" data-content="request">
+                                <pre><code>POST /transactions/return/101</code></pre>
+                            </div>
+                            <div class="tab-content" data-content="response">
+                                <div class="status-tabs">
+                                    <div class="status-tab-header">
+                                        <button class="status-tab-btn active" data-status="200">200 OK</button>
+                                        <button class="status-tab-btn" data-status="400">400 Error</button>
+                                    </div>
+                                    <div class="status-tab-body">
+                                        <div class="status-tab-content active" data-status-content="200">
+                                            <pre><code>{
+  "status": "success",
+  "message": "book returned successfully",
+  "data": { "fine_amount": 0, "is_late": false }
+}</code></pre>
+                                        </div>
+                                        <div class="status-tab-content" data-status-content="400">
+                                            <pre><code>{
+  "status": "error",
+  "message": "you have not borrowed this book",
+  "data": null
+}</code></pre>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="endpoint" id="history">
+                    <div class="endpoint-header">
+                        <span class="badge get">GET</span>
+                        <span>/transactions/history</span>
+                    </div>
+                    <p>Melihat riwayat transaksi pribadi.</p>
+                    <div class="docs-tabs">
+                        <div class="tab-header">
+                            <button class="tab-btn active" data-tab="request">Request</button>
+                            <button class="tab-btn" data-tab="response">Response</button>
+                        </div>
+                        <div class="tab-body">
+                            <div class="tab-content active" data-content="request">
+                                <pre><code>Header Authorization: Bearer {token}</code></pre>
+                            </div>
+                            <div class="tab-content" data-content="response">
+                                <div class="status-tabs">
+                                    <div class="status-tab-header">
+                                        <button class="status-tab-btn active" data-status="200">200 OK</button>
+                                    </div>
+                                    <div class="status-tab-body">
+                                        <div class="status-tab-content active" data-status-content="200">
+                                            <pre><code>{
+  "status": "success",
+  "data": [
+    {
+      "id": 1,
+      "book_id": 101,
+      "book_title": "Clean Code",
+      "action": "borrow",
+      "timestamp": "2025-12-24T..."
+    }
+  ]
+}</code></pre>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div id="transaction-admin" style="margin-top: 2rem;">
+                    <h3>Admin & Testing</h3>
+                    <div class="endpoint">
+                        <div class="endpoint-header">
+                            <span class="badge get">GET</span>
+                            <span>/transactions</span>
+                        </div>
+                        <p>Mendapatkan riwayat transaksi seluruh pengguna (Admin).</p>
+                        <div class="docs-tabs">
+                            <div class="tab-header">
+                                <button class="tab-btn active" data-tab="request">Request</button>
+                                <button class="tab-btn" data-tab="response">Response</button>
+                            </div>
+                            <div class="tab-body">
+                                <div class="tab-content active" data-content="request">
+                                    <pre><code>Header Authorization: Bearer {admin_token}</code></pre>
+                                </div>
+                                <div class="tab-content" data-content="response">
+                                    <div class="status-tabs">
+                                        <div class="status-tab-header">
+                                            <button class="status-tab-btn active" data-status="200">200 OK</button>
+                                        </div>
+                                        <div class="status-tab-body">
+                                            <div class="status-tab-content active" data-status-content="200">
+                                                <pre><code>{
+  "status": "success",
+  "data": [ ... ]
+}</code></pre>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="endpoint">
+                        <div class="endpoint-header">
+                            <span class="badge post">POST</span>
+                            <span>/transactions/test/make-late/{id}</span>
+                        </div>
+                        <p>Simulasi keterlambatan untuk testing denda.</p>
+                        <div class="docs-tabs">
+                            <div class="tab-header">
+                                <button class="tab-btn active" data-tab="request">Request</button>
+                                <button class="tab-btn" data-tab="response">Response</button>
+                            </div>
+                            <div class="tab-body">
+                                <div class="tab-content active" data-content="request">
+                                    <pre><code>POST /transactions/test/make-late/1?days=5</code></pre>
+                                </div>
+                                <div class="tab-content" data-content="response">
+                                    <div class="status-tabs">
+                                        <div class="status-tab-header">
+                                            <button class="status-tab-btn active" data-status="200">200 OK</button>
+                                        </div>
+                                        <div class="status-tab-body">
+                                            <div class="status-tab-content active" data-status-content="200">
+                                                <pre><code>{
+  "status": "success",
+  "message": "transaction marked as late"
+}</code></pre>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <footer>
+                <p style="margin-top: 5rem; font-size: 0.9rem; text-align: center;">
+                    &copy; 2025 Pushtaka. Dibuat dengan antusiasme.
+                </p>
+            </footer>
+        </div>
+    </main>
+</body>
+
+</html>

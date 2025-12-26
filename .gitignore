@@ -1,0 +1,12 @@
+# Environment Variables
+.env
+
+# Project Plan & Notes
+.plan/
+.xan/
+
+# OS Specific
+.DS_Store
+Thumbs.db
+
+docs/tts.md
